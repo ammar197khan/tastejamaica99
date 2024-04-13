@@ -9,7 +9,7 @@
 	//https://localhost/ http://inventory.devproedge.net/admin/login.php?redirect_url=index.php
 	// define('BASE_URL',"http://tastejamica.devproedge.com/");
 	// define('BASE_URL',"18.232.137.53/");
-	define('BASE_URL',"https://tastejamaica.com/");
+	define('BASE_URL',"http://localhost/tastejamaica/public/");
 
 	define('ADMIN_URL',BASE_URL.'admin/');
 
@@ -26,9 +26,9 @@
 
 	define("DB_USER", "root");
 	
-	define("DB_PASS", 'Love2bank123');
+	define("DB_PASS", '');
 	
-	define("DB_NAME", "tastejamaica_new");
+	define("DB_NAME", "tastejamaica");
 
 	
 

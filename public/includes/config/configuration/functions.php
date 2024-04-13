@@ -6,7 +6,8 @@ function load_class($class)
 		$obj = $_class[$class];
 	} else {
 		// echo get_directory_path();
-		$directoryPath=str_replace("includes/config","admin/includes",get_directory_path());
+		$directoryPath=str_replace("includes\config","admin\includes",get_directory_path());
+		// $directoryPath=str_replace("includes/config","admin/includes",get_directory_path());
 		// echo $directoryPath;
 		// die();
 		if (file_exists($directoryPath . '/classes/' . strtolower($class) . '.php')) {

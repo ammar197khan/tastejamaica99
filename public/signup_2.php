@@ -225,7 +225,7 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
 <body>
 
     <?php include 'includes/header.php' ?>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC46_PI75dS4Jv3rIEIeblb3S13bZUFqM0&libraries=places" defer></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC46_PI75dS4Jv3rIEIeblb3S13bZUFqM0&libraries=places" async defer></script> -->
     <form enctype="multipart/form-data" method="post">
         <section class=" main_section position-relative mb-5 pb-5" style="background-position: right">
             <div class="bg_images_area">
@@ -324,46 +324,8 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
                                         <span class="bg-white pe-3">CONTACT INFORMATION</span>
                                     </h4>
                                 </div>
-                                <div class="col-md-6">
-
-                                    <div class="form-group mt-2 pt-3">
-                                        <label>Address</label>
-                                        <input type="text" name="address" id="addressInput" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" value="<?= ucwords($data_row['address']) ?>">
-                                    </div>
-                                    <div class="col-md-6 d-block d-lg-none d-md-none mt-3 mb-3 text-center">
-                                        new map
-                                    </div>
-                                    <div class="form-group mt-2 ">
-                                        <label>Parish</label>
-                                        <?php
-                                        $parish_options = array(
-                                            "Clarendon" => "Clarendon",
-                                            "Hanover" => "Hanover",
-                                            "Kingston" => "Kingston",
-                                            "Manchester" => "Manchester",
-                                            "Portland" => "Portland",
-                                            "Saint_Andrew" => "Saint Andrew",
-                                            "Saint_Ann" => "Saint Ann",
-                                            "Saint_Catherine" => "Saint Catherine",
-                                            "Saint_Elizabeth" => "Saint Elizabeth",
-                                            "Saint_James" => "Saint James",
-                                            "Saint_Mary" => "Saint Mary",
-                                            "Saint_Thomas" => "Saint Thomas",
-                                            "Trelawny" => "Trelawny",
-                                            "Westmoreland" => "Westmoreland"
-                                        );
-                                        ?>
-                                        <select name="parish_type" id="" class="form-control">
-                                            <option value="">Select Option</option>
-                                            <?php
-                                            foreach ($parish_options as $key => $parish_option) {
-                                            ?>
-                                                <option <?= $data_row['parish_type'] == $key ? 'selected' : '' ?> value="<?= $key ?>"><?= ucwords($parish_option) ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 d-none d-lg-block d-md-block text">
+                               
+                                <div class="col-md-12  text">
 
                                     <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d970742.4280513572!2d-77.93552567561743!3d18.11951781008162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eda2a1bc6cf719d%3A0x59a0d1c0b5120efa!2sJamaica!5e0!3m2!1sen!2s!4v1700198401062!5m2!1sen!2s" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> -->
                                     <?php include 'map-file.php'; ?>
@@ -371,7 +333,63 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
                                     <!-- <div id="map"></div> -->
 
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                <div class="row" id="addAddressFields">
 
+                                <div class="col-md-6 mt-2 pt-3">
+                                <label>Address</label>
+                               <!-- <input type="text" name="address" id="addressInput" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" value="  -->
+
+                                <!-- ammar code--> 
+                              
+                                <input type="text" name="address"  placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" id="addressInput_1" value="<?= ucwords($data_row['address']) ?>">
+                               
+                                <!-- ammar code -->
+                            </div>
+<div class="col-md-4 d-block d-lg-none d-md-none mt-3 mb-3 text-center">
+    new map
+</div>
+<div class=" mt-2 pt-3 col-md-6 paris-select">
+    <label>Parish</label>
+    <?php
+    $parish_options = array(
+        "Clarendon" => "Clarendon",
+        "Hanover" => "Hanover",
+        "Kingston" => "Kingston",
+        "Manchester" => "Manchester",
+        "Portland" => "Portland",
+        "Saint_Andrew" => "Saint Andrew",
+        "Saint_Ann" => "Saint Ann",
+        "Saint_Catherine" => "Saint Catherine",
+        "Saint_Elizabeth" => "Saint Elizabeth",
+        "Saint_James" => "Saint James",
+        "Saint_Mary" => "Saint Mary",
+        "Saint_Thomas" => "Saint Thomas",
+        "Trelawny" => "Trelawny",
+        "Westmoreland" => "Westmoreland"
+    );
+    ?>
+    <select name="parish_type" id="" class="form-control" style="width: 88%;">
+        <option value="">Select Option</option>
+        <?php
+        foreach ($parish_options as $key => $parish_option) {
+        ?>
+            <option <?= $data_row['parish_type'] == $key ? 'selected' : '' ?> value="<?= $key ?>"><?= ucwords($parish_option) ?></option>
+        <?php } ?>
+    </select>
+   
+</div>
+ <!-- 
+    Ammar code  -->
+    
+   
+                                </div>
+                                <button id="addAddress" class="btn btn-info"><i class="fas fa-plus-circle"></i> Add Addresses</button>
+  <!--  
+    End Ammar code -->                                
+</div>
                                 <div class="col-md-6">
 
                                     <div class="form-group mt-2">
@@ -816,6 +834,96 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
     <script type="text/javascript">
+        // Ammar code
+
+function initMap() {
+    // Initialize the map with center in Jamaica
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 18.1096,
+            lng: -77.2975
+        },
+        zoom: 8
+    });
+    
+    // Counter for dynamically generated fields
+    var fieldCounter = 1;
+
+    // Function to bind autocomplete and marker to a given field
+    function bindField(counter) {
+        var input = $('#addressInput_' + counter)[0];
+        var marker = new google.maps.Marker({
+            map: map,
+            anchorPoint: new google.maps.Point(0, -29)
+        });
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (place.geometry) {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+                marker.setPosition(place.geometry.location);
+            }
+        });
+        
+        // Listen for the click event on the map
+        map.addListener('click', function (event) {
+            var marker = new google.maps.Marker({
+                position: event.latLng,
+                map: map
+            });
+
+            var geocoder = new google.maps.Geocoder;
+            geocoder.geocode({
+                'location': event.latLng
+            }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        // Assuming there's only one address field
+                        document.getElementById('addressInput_' + counter).value = results[0].formatted_address;
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+        });
+    }
+
+    // Bind the first field on document load
+    bindField(fieldCounter);
+
+    // Add address field
+    $('#addAddress').click(function () {
+        
+        event.preventDefault();
+        ++fieldCounter;
+        var newField = '<div class="row" style="position: relative;"><div class="col-md-6 mt-2 pt-3"> <label>Address</label> <input type="text" id="addressInput_' + fieldCounter + '" name="address" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3 " value=""> </div> <div class="col-md-4 d-block d-lg-none d-md-none mt-3 mb-3 text-center"> new map </div> <div class=" mt-2 pt-3 col-md-6 paris-select"> <label>Parish</label> <select name="parish_type" id="" class="form-control" style="width: 88%;"> <option value="">Select Option</option>  <option value=""></option></select></div> <i class="fas fa-trash remove-address addAddressDeleteField" style="position: absolute;top: 73px; right: 39px; width: auto;" data-target="addressField_' + fieldCounter + '"></i></div>';
+        $('#addAddressFields').append(newField);
+        // Bind autocomplete and marker to the new field
+        bindField(fieldCounter);
+    });
+
+    // Remove address field
+    $(document).on('click', '.remove-address', function () {
+        var target = $(this).data('target');
+        $('#' + target).remove();
+    });
+}
+
+     $("#addAddressFields").on("click", ".addAddressDeleteField", function(){
+    $(this).parent().remove();
+  });
+  </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTKJ0rBDwKl1Oqv_M_AgFW_lRKkro6a64&libraries=places&callback=initMap" async defer></script>
+<!--Ammar Code end -->
+
+<script type="text/javascript">
+
+
         $('select').selectpicker();
         var dropzone = new Dropzone('#dropzone1', {
             previewTemplate: document.querySelector('#preview-template').innerHTML,
@@ -931,9 +1039,10 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
             }
         }
     </script>
-
+ 
 
 <?php 
+
 /*
     <script>
         function initMap() {
