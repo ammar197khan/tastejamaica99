@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <?php include('includes/site-master.php') ?>
+ <style type="text/css">
+     .exp_card {padding: 15px;background-color: #fff;box-shadow: 0 0 2rem 0 rgba(136,152,170,.15)!important;}
+ 
+ </style>
+
+</head>
+
+<body id="page-top">
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <?php include('includes/sidebar.php') ?>
+    <!-- Sidebar -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <!-- TopBar -->
+        <?php include('includes/header.php') ?>
+        <!-- Topbar -->
+
+        <!-- Container Fluid-->
+        <div class="container-fluid" id="container-wrapper">
+               <h1 class="h3 mb-0 text-gray-800 mb-3" >Add Expense</h1>
+               <form class="" action="" method="post">
+                   
+                </form>
+        </div>
+        <!---Container Fluid-->
+      </div>
+      <!-- Footer -->
+     <?php include('includes/footer.php') ?>
+      <!-- Footer -->
+    </div>
+  </div>
+
+  <!-- Scroll to top -->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+<?php include('includes/commonjs.php') ?>
+<script type="text/javascript">
+     
+</script>
+</body>
+
+</html>
