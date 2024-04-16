@@ -3,7 +3,8 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL & ~E_WARNING);
-$path_includes = str_replace("/includes", "", dirname(__FILE__)) . "/";
+$path_includes = str_replace("\includes", "", dirname(__FILE__)) . "/";
+
 
 require_once($path_includes . "includes/configuration/config.php");
 require_once($path_includes . "includes/configuration/functions.php");

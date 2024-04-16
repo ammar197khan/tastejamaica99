@@ -47,6 +47,10 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
 
 
 
+$db->select("SELECT * FROM user_addresses WHERE user_id = " . intval($data_row['user_id']));
+                                            
+$data_user_addresses = $db->fetch_all();
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -79,6 +83,24 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
     a {
         text-decoration: none;
     }
+    ul {
+  list-style: none;
+}
+
+li {
+  margin-bottom: 10px; /* Add space between list items if needed */
+}
+    span {
+        display: inline-block;
+  position: relative;
+  padding-left: 20px; /* Add space after bullet */
+}
+
+span:before {
+  /* content: ""; Bullet character */
+  position: absolute;
+  left: 0;
+}
     @media only screen and (max-width: 767px) {
     .iphone-user-img{
         height: 170px !important;
@@ -358,6 +380,51 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
 
                                         </div>
                                     </div>
+                                    <div class="row mb-3">
+
+                                        <div class="col-md-10 ">
+                                            <div class="business_item">
+                                                <div class="business_icon">
+                                                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="12" fill="#FEFBDA" />
+    <path d="M18 6C14.6863 6 12 8.68629 12 12C12 15.3137 18 27 18 27C18 27 24 15.3137 24 12C24 8.68629 21.3137 6 18 6Z" fill="black" />
+    <path d="M18 14C16.8954 14 16 14.8954 16 16C16 17.1046 16.8954 18 18 18C19.1046 18 20 17.1046 20 16C20 14.8954 19.1046 14 18 14Z" fill="black" />
+</svg>
+
+
+
+
+                                                </div>
+                                                <div class="business_content">
+                                                    <div class="business_info_title"> Addresses</div>
+                                                    <div class="location" style="color: #000;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; margin-top:10px;">
+    <ul >                                                 
+         
+         <?php if(!empty($data_user_addresses)){
+                                                        foreach($data_user_addresses as $data_user_address){
+                                                            ?>
+                                                            
+    <li style="margin-left: 18px; border-bottom: 2px solid  #ccc; margin-bottom: 14px; padding-bottom: 8px;" >
+                                                      <span >  <?= $data_user_address['address'] ?> </span>
+                                                        </li>
+                                                            
+                                                   <?php
+                                                    }
+                                                }
+                                                ?>
+    </ul>
+                                                </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -448,7 +515,16 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
                         <p class="product_text">
                             <b>Location</b>
                             <!-- <iframe class=" mt-3 mb-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3793.561130586922!2d-76.83494992481977!3d18.04555988295831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8edb3e24d0b77df9%3A0xf8e2df169e3296fe!2sRed%20Hills%20Rd%2C%20Kingston%2C%20Jamaica!5e0!3m2!1sen!2s!4v1698350158625!5m2!1sen!2s" width="100%" height="350" style="border:10px solid white;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> -->
-                                <iframe width="100%" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.it/maps?q=<?php echo $data_row['address']; ?>&output=embed"></iframe>
+                                <?php 
+                                 
+                                 $addressArr = array();
+                                 foreach ($data_user_addresses as $address){
+                                    $addressArr[] =   $address['address'];
+                                 }
+                                    ?>
+                                    <div id="map" style="height: 320px;"></div>
+                                
+                                   
 
                         </p>
                         <p class="scan_me">
@@ -545,6 +621,44 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
     </form>
     <?php include 'includes/footer.php' ?>
     <script>
+
+        // Initialize and create the map
+        function initMap() {
+            // Create a map object and specify the DOM element for display
+            var map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 18.1096,
+            lng: -77.2975
+        },
+        zoom: 8
+    });
+
+            // Array of addresses
+            var addressArr = <?php echo json_encode($addressArr); ?>
+            // console.log(addressArr);
+
+            // Loop through the addresses and create markers
+            for (var i = 0; i < addressArr.length; i++) {
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'address': addressArr[i] }, function (results, status) {
+                    if (status === 'OK') {
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location
+                        });
+                    } else {
+                        console.error('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
+        }
+    </script>
+    <!-- Load the Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTKJ0rBDwKl1Oqv_M_AgFW_lRKkro6a64&libraries=places&callback=initMap" async defer></script>
+
+    <script>
+
+
         toastr.options = {
             "closeButton": true,
             "newestOnTop": false,

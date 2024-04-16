@@ -54,18 +54,19 @@ if (isset($_REQUEST['command']) && $_REQUEST['command'] == 'insert_preview') {
     $arr['user_id'] = intval($auth_row['id']);
     $arr['name'] = $_REQUEST['name'];
     $arr['discription'] = $_REQUEST['discription'];
-    $arr['business_type'] = implode(',', $_REQUEST['business_type']);
+    $arr['business_type'] = !empty($_REQUEST['business_type'])?  implode(',', $_REQUEST['business_type']) : "";
     $arr['remotely'] = $_REQUEST['remotely'];
     $arr['delivery_services'] = $_REQUEST['delivery_services'];
-    $arr['address'] = $_REQUEST['address'];
+    
+    // $arr['address'] = $_REQUEST['address'];
     $arr['phone_no'] = $_REQUEST['phone_no'];
     $arr['email'] = $_REQUEST['email'];
     $arr['web_site'] = $_REQUEST['web_site'];
     $arr['facebook'] = $_REQUEST['facebook'];
     $arr['instagram'] = $_REQUEST['instagram'];
-    $arr['cuisines'] = implode(',', $_REQUEST['cuisines']);
-    $arr['meal'] = implode(',', $_REQUEST['meal']);
-    $arr['parish_type'] = $_REQUEST['parish_type'];
+    $arr['cuisines'] = !empty($_REQUEST['cuisines'])? implode(',', $_REQUEST['cuisines']) : "";
+    $arr['meal'] = !empty($_REQUEST['meal'])? implode(',', $_REQUEST['meal']): "";
+    // $arr['parish_type'] = $_REQUEST['parish_type'];
     $arr['approve'] = 'no';
     $arr['payment_method'] = implode(',', $_REQUEST['payment_method']);
     if ($_FILES['health_certificate']['name'][0] != '') {
@@ -119,6 +120,18 @@ if (isset($_REQUEST['command']) && $_REQUEST['command'] == 'insert_preview') {
         QRcode::png($text, $file_name);
         $db->query("update get_listed SET qr_code = '" . $img_name . "' WHERE id = " . $inserted_id);
     }
+
+    if($inserted_id > 0){
+        for( $i= 0;  $i < count($_REQUEST['parish_type']);   $i++){
+           
+            $address_arr = array();
+            $address_arr['user_id'] = $auth_row['id'];
+            $address_arr['address'] = $_REQUEST['address'][$i];
+            $address_arr['parish_type'] = $_REQUEST['parish_type'][$i];
+            $db->insert($address_arr, 'user_addresses');
+        }
+    }
+
     // $inserted_id =1;
     if ($inserted_id > 0) {
         foreach ($_REQUEST['hidden_itra'] as $itrat => $val) {
@@ -203,13 +216,15 @@ if (isset($_REQUEST['command']) && $_REQUEST['command'] == 'insert_preview') {
 }
 
 $data_row = $db->fetch_array_by_query('select * from get_listed where id=' . intval($_REQUEST['id']));
+
 if (isset($_REQUEST['cmd']) && $_REQUEST['cmd'] == 'admin_auth') {
     // die('admin');
 } elseif ($data_row && $data_row['user_id'] != $auth_row['id']) {
     redirect_header('profile.php');
 }
 $multi_files = $db->fetch_array_by_query('select * from multi_files where detail_id=' . intval($_REQUEST['id']));
-
+$db->select("SELECT * FROM user_addresses WHERE user_id = " . intval($data_row['user_id']));
+$data_user_addresses = $db->fetch_all();
 ?>
 <!doctype html>
 <html lang="en">
@@ -337,14 +352,19 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
                             <div class="row">
                                 <div class="col-md-12">
                                 <div class="row" id="addAddressFields">
+<?php 
+if(!empty($data_user_addresses)){ 
+    
+    foreach ($data_user_addresses as $key => $data_user_address){
+    ?>
 
-                                <div class="col-md-6 mt-2 pt-3">
+<div class="col-md-6 mt-2 pt-3">
                                 <label>Address</label>
                                <!-- <input type="text" name="address" id="addressInput" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" value="  -->
 
                                 <!-- ammar code--> 
                               
-                                <input type="text" name="address"  placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" id="addressInput_1" value="<?= ucwords($data_row['address']) ?>">
+                                <input type="text" name="address[]"  placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" id="addressInput_1" value="<?= ucwords($data_user_address['address']) ?>">
                                
                                 <!-- ammar code -->
                             </div>
@@ -371,7 +391,58 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
         "Westmoreland" => "Westmoreland"
     );
     ?>
-    <select name="parish_type" id="" class="form-control" style="width: 88%;">
+    <select name="parish_type[]" id="" class="form-control" style="width: 88%;">
+        <option value="">Select Option</option>
+        <?php
+        foreach ($parish_options as $key => $parish_option) {
+        ?>
+            <option <?= $data_user_address['parish_type'] == $key ? 'selected' : '' ?> value="<?= $key ?>"><?= ucwords($parish_option) ?></option>
+        <?php } ?>
+    </select>
+   
+</div>
+
+
+<?php 
+} 
+}
+else{
+     ?>
+    
+    <div class="col-md-6 mt-2 pt-3">
+                                <label>Address</label>
+                               <!-- <input type="text" name="address" id="addressInput" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" value="  -->
+
+                                <!-- ammar code--> 
+                              
+                                <input type="text" name="address[]"  placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3" id="addressInput_1" value="<?= ucwords($data_row['address']) ?>">
+                               
+                                <!-- ammar code -->
+                            </div>
+<div class="col-md-4 d-block d-lg-none d-md-none mt-3 mb-3 text-center">
+    new map
+</div>
+<div class=" mt-2 pt-3 col-md-6 paris-select">
+    <label>Parish</label>
+    <?php
+    $parish_options = array(
+        "Clarendon" => "Clarendon",
+        "Hanover" => "Hanover",
+        "Kingston" => "Kingston",
+        "Manchester" => "Manchester",
+        "Portland" => "Portland",
+        "Saint_Andrew" => "Saint Andrew",
+        "Saint_Ann" => "Saint Ann",
+        "Saint_Catherine" => "Saint Catherine",
+        "Saint_Elizabeth" => "Saint Elizabeth",
+        "Saint_James" => "Saint James",
+        "Saint_Mary" => "Saint Mary",
+        "Saint_Thomas" => "Saint Thomas",
+        "Trelawny" => "Trelawny",
+        "Westmoreland" => "Westmoreland"
+    );
+    ?>
+    <select name="parish_type[]" id="" class="form-control" style="width: 88%;">
         <option value="">Select Option</option>
         <?php
         foreach ($parish_options as $key => $parish_option) {
@@ -381,13 +452,22 @@ $multi_files = $db->fetch_array_by_query('select * from multi_files where detail
     </select>
    
 </div>
+
+
+
+    <?php } ?>                             
+    
+
+
+
+
  <!-- 
     Ammar code  -->
     
    
                                 </div>
-                                <button id="addAddress" class="btn btn-info"><i class="fas fa-plus-circle"></i> Add Addresses</button>
-  <!--  
+                                <button id="addAddress" class="btn btn-info"><i class="fas fa-plus-circle"></i> Add Location</button>
+  <!-- 
     End Ammar code -->                                
 </div>
                                 <div class="col-md-6">
@@ -901,10 +981,34 @@ function initMap() {
         
         event.preventDefault();
         ++fieldCounter;
-        var newField = '<div class="row" style="position: relative;"><div class="col-md-6 mt-2 pt-3"> <label>Address</label> <input type="text" id="addressInput_' + fieldCounter + '" name="address" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3 " value=""> </div> <div class="col-md-4 d-block d-lg-none d-md-none mt-3 mb-3 text-center"> new map </div> <div class=" mt-2 pt-3 col-md-6 paris-select"> <label>Parish</label> <select name="parish_type" id="" class="form-control" style="width: 88%;"> <option value="">Select Option</option>  <option value=""></option></select></div> <i class="fas fa-trash remove-address addAddressDeleteField" style="position: absolute;top: 73px; right: 39px; width: auto;" data-target="addressField_' + fieldCounter + '"></i></div>';
-        $('#addAddressFields').append(newField);
-        // Bind autocomplete and marker to the new field
-        bindField(fieldCounter);
+        var parishOptions = {
+    "Clarendon": "Clarendon",
+    "Hanover": "Hanover",
+    "Kingston": "Kingston",
+    "Manchester": "Manchester",
+    "Portland": "Portland",
+    "Saint_Andrew": "Saint Andrew",
+    "Saint_Ann": "Saint Ann",
+    "Saint_Catherine": "Saint Catherine",
+    "Saint_Elizabeth": "Saint Elizabeth",
+    "Saint_James": "Saint James",
+    "Saint_Mary": "Saint Mary",
+    "Saint_Thomas": "Saint Thomas",
+    "Trelawny": "Trelawny",
+    "Westmoreland": "Westmoreland"
+};
+
+        var newField = '<div class="row" style="position: relative;"><div class="col-md-6 mt-2 pt-3"> <label>Address</label> <input type="text" id="addressInput_' + fieldCounter + '" name="address[]" placeholder="60 Knutsford Boulevard, Kingston 8" class="form-control py-3 " value=""> </div> <div class="col-md-4 d-block d-lg-none d-md-none mt-3 mb-3 text-center"> new map </div> <div class=" mt-2 pt-3 col-md-6 paris-select"> <label>Parish</label> <select name="parish_type[]" id="parishSelect_' + fieldCounter + '" class="form-control" style="width: 88%;"><option value="">Select  Option</option>';
+        
+        $.each(parishOptions, function(key, value) {
+        newField  += '<option value="' + key + '">' + value + '</option>';
+    });
+        
+        newField  += '</select></div> <i class="fas fa-trash remove-address addAddressDeleteField" style="position: absolute;top: 73px; right: 39px; width: auto;" data-target="addressField_' + fieldCounter + '"></i></div>';
+
+    $('#addAddressFields').append(newField);   
+    bindField(fieldCounter);
+    
     });
 
     // Remove address field
